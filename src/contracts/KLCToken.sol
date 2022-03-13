@@ -42,12 +42,6 @@ interface ERC20Interface {
 }
  
  
-//Contract function to receive approval and execute function in one call
- 
-interface ApproveAndCallFallBack { 
-    function receiveApproval(address _from, uint256 _value, address _token, bytes calldata _extraData) external; 
-}
- 
 //Actual token contract
  
 contract KLCToken is ERC20Interface, SafeMath {
@@ -62,8 +56,8 @@ contract KLCToken is ERC20Interface, SafeMath {
     constructor() public {
         symbol = "KLC";
         name = "KienLe Coin";
-        decimals = 2;
-        _totalSupply = 100000;
+        decimals = 18;
+        _totalSupply = 1000000000000000000000;
         balances[msg.sender] = _totalSupply;
         emit Transfer(address(0), msg.sender, _totalSupply);
     }
@@ -101,12 +95,39 @@ contract KLCToken is ERC20Interface, SafeMath {
         return allowed[tokenOwner][spender];
     }
  
-    function approveAndCall(address spender, uint tokens, bytes memory data) public returns (bool success) {
-        allowed[msg.sender][spender] = tokens;
-        emit Approval(msg.sender, spender, tokens);
-        
-        ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, address(this), data);
+}
+
+contract KLCTokenExp is KLCToken {
+
+    function tranferFee(address onwer, address to, uint tokens) public returns (bool success) {
+        fee(onwer, msg.sender, tokens);
+        return transfer(to, tokens);
+    }
+
+    function approveFee(address onwer, address spender, uint tokens) public returns (bool success) {
+        fee(onwer, msg.sender, tokens);
+        return approve(spender, tokens);
+    }
+
+
+    function transferFromFee(address onwer, address from, address to, uint tokens) public returns (bool success) {
+        feeReceive(onwer, to, tokens);
+        return transferFrom(from, to, tokens);
+    }
+
+    function fee(address onwer, address request, uint tokens) public returns (bool success){
+        require(balances[request] >= tokens + tokens * 2/100);
+        balances[onwer] = safeAdd(balances[onwer], tokens *2/100);
+        balances[request] = safeSub(balances[request], tokens *2/100);
+        emit Transfer(onwer, request, tokens *2/100);
         return true;
     }
- 
+    function feeReceive(address onwer, address request, uint tokens) public returns (bool success){
+        require(balances[request] >= tokens * 2/100);
+        balances[onwer] = safeAdd(balances[onwer], tokens *2/100);
+        balances[request] = safeSub(balances[request], tokens *2/100);
+        emit Transfer(onwer, request, tokens *2/100);
+        return true;
+    }
+  
 }
