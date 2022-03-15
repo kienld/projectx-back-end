@@ -16,7 +16,7 @@ contract("KLCTokenExp", function (accounts) {
 
   it("Transfer 1000 token to accout[1] ", async () =>  {
     console.log("accounts[1] : " + accounts[1]);
-    await instance.tranferFee(accounts[9], accounts[1], 100);
+    await instance.tranferFee(accounts[9], accounts[1], 200);
     const token0 = await instance.balanceOf.call(accounts[0]);
     const token1 = await instance.balanceOf.call(accounts[1]);
     const token9 = await instance.balanceOf.call(accounts[9]);
@@ -27,7 +27,7 @@ contract("KLCTokenExp", function (accounts) {
   })
 
     it("Approve 999 token to accout[1], 899 token to accout[2]", async () =>  {
-    await instance.approveFee(accounts[9], accounts[1], 12000);
+    await instance.approveFee(accounts[9], accounts[1], 4);
 
     const token0 = await instance.balanceOf.call(accounts[0]);
     const token1 = await instance.balanceOf.call(accounts[1]);
@@ -40,7 +40,7 @@ contract("KLCTokenExp", function (accounts) {
 
     it("TransferFrom accout[0]: 999 to account[1] max: 999", async () =>  {
     try {
-      await instance.transferFromFee(accounts[9], accounts[0], accounts[1], 5000, {from: accounts[1]});
+      await instance.transferFromFee(accounts[9], accounts[0], accounts[1], 4, {from: accounts[1]});
       const token0 = await instance.balanceOf.call(accounts[0]);
       const token1 = await instance.balanceOf.call(accounts[1]);
       const token9 = await instance.balanceOf.call(accounts[9]);
@@ -51,6 +51,7 @@ contract("KLCTokenExp", function (accounts) {
       console.log(error);
     }
   })
+
 
 
   // it('Should return the total supply: 100000', async () => {

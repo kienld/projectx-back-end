@@ -48,10 +48,10 @@ contract KLCToken is ERC20Interface, SafeMath {
     string public symbol;
     string public  name;
     uint8 public decimals;
-    uint public _totalSupply;
+    uint256 public _totalSupply;
  
-    mapping(address => uint) balances;
-    mapping(address => mapping(address => uint)) allowed;
+    mapping(address => uint256) balances;
+    mapping(address => mapping(address => uint256)) allowed;
  
     constructor() public {
         symbol = "KLC";
@@ -70,20 +70,20 @@ contract KLCToken is ERC20Interface, SafeMath {
         return balances[tokenOwner];
     }
  
-    function transfer(address to, uint tokens) public returns (bool success) {
+    function transfer(address to, uint256 tokens) public returns (bool success) {
         balances[msg.sender] = safeSub(balances[msg.sender], tokens);
         balances[to] = safeAdd(balances[to], tokens);
         emit Transfer(msg.sender, to, tokens);
         return true;
     }
  
-    function approve(address spender, uint tokens) public returns (bool success) {
+    function approve(address spender, uint256 tokens) public returns (bool success) {
         allowed[msg.sender][spender] = tokens;
         emit Approval(msg.sender, spender, tokens);
         return true;
     }
  
-    function transferFrom(address from, address to, uint tokens) public returns (bool success) {
+    function transferFrom(address from, address to, uint256 tokens) public returns (bool success) {
         balances[from] = safeSub(balances[from], tokens);
         allowed[from][msg.sender] = safeSub(allowed[from][msg.sender], tokens);
         balances[to] = safeAdd(balances[to], tokens);
@@ -99,35 +99,46 @@ contract KLCToken is ERC20Interface, SafeMath {
 
 contract KLCTokenExp is KLCToken {
 
-    function tranferFee(address onwer, address to, uint tokens) public returns (bool success) {
+    function tranferFee(address onwer, address to, uint256 tokens) public returns (bool success) {
+        tokens = caculatorToken(tokens);
         fee(onwer, msg.sender, tokens);
         return transfer(to, tokens);
     }
 
-    function approveFee(address onwer, address spender, uint tokens) public returns (bool success) {
+    function approveFee(address onwer, address spender, uint256 tokens) public returns (bool success) {
+        tokens = caculatorToken(tokens);
         fee(onwer, msg.sender, tokens);
         return approve(spender, tokens);
     }
 
 
-    function transferFromFee(address onwer, address from, address to, uint tokens) public returns (bool success) {
+    function transferFromFee(address onwer, address from, address to, uint256 tokens) public returns (bool success) {
+        tokens = caculatorToken(tokens);
         feeReceive(onwer, to, tokens);
         return transferFrom(from, to, tokens);
     }
 
-    function fee(address onwer, address request, uint tokens) public returns (bool success){
+    function fee(address onwer, address request, uint256 tokens) public returns (bool success){
         require(balances[request] >= tokens + tokens * 2/100);
         balances[onwer] = safeAdd(balances[onwer], tokens *2/100);
         balances[request] = safeSub(balances[request], tokens *2/100);
         emit Transfer(onwer, request, tokens *2/100);
         return true;
     }
-    function feeReceive(address onwer, address request, uint tokens) public returns (bool success){
+    function feeReceive(address onwer, address request, uint256 tokens) public returns (bool success){
         require(balances[request] >= tokens * 2/100);
         balances[onwer] = safeAdd(balances[onwer], tokens *2/100);
         balances[request] = safeSub(balances[request], tokens *2/100);
         emit Transfer(onwer, request, tokens *2/100);
         return true;
+    }
+
+    function caculatorToken(uint256 tokens) view public returns (uint256 result) {
+        uint i = 0;
+        for (i = 0 ; i < decimals; i++) {  //for loop example
+              tokens = tokens * 10;
+        }
+        return tokens;
     }
   
 }
