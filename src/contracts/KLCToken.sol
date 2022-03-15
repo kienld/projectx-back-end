@@ -116,9 +116,9 @@ contract KLCToken is ERC20Interface, SafeMath {
 
     function caculatorToken(uint256 tokens) view private returns (uint256 result) {
         uint i = 0;
-        for (i = 0 ; i < decimals; i++) {  //for loop example
-              tokens = tokens * 10;
-        }
+        // for (i = 0 ; i < decimals; i++) {  //for loop example
+        //       tokens = tokens * 10;
+        // }
         return tokens;
     }
 
