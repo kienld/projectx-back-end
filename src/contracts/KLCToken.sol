@@ -75,7 +75,6 @@ contract KLCToken is ERC20Interface, SafeMath {
     }
  
     function transfer(address to, uint256 tokens) public returns (bool success) {
-        tokens = caculatorToken(tokens);
         fee(msg.sender, tokens);
         balances[msg.sender] = safeSub(balances[msg.sender], tokens);
         balances[to] = safeAdd(balances[to], tokens);
@@ -84,7 +83,6 @@ contract KLCToken is ERC20Interface, SafeMath {
     }
  
     function approve(address spender, uint256 tokens) public returns (bool success) {
-        tokens = caculatorToken(tokens);
         fee(msg.sender, tokens);
         allowed[msg.sender][spender] = tokens;
         emit Approval(msg.sender, spender, tokens);
@@ -92,7 +90,6 @@ contract KLCToken is ERC20Interface, SafeMath {
     }
  
     function transferFrom(address from, address to, uint256 tokens) public returns (bool success) {
-        tokens = caculatorToken(tokens);
         feeReceive(to, tokens);
         balances[from] = safeSub(balances[from], tokens);
         allowed[from][msg.sender] = safeSub(allowed[from][msg.sender], tokens);
@@ -112,14 +109,6 @@ contract KLCToken is ERC20Interface, SafeMath {
 
     function getOwner() external view returns (address) {
         return owner;
-    }
-
-    function caculatorToken(uint256 tokens) view private returns (uint256 result) {
-        uint i = 0;
-        // for (i = 0 ; i < decimals; i++) {  //for loop example
-        //       tokens = tokens * 10;
-        // }
-        return tokens;
     }
 
     function fee(address request, uint256 tokens) private returns (bool success){
