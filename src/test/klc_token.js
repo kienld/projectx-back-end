@@ -1,22 +1,23 @@
-const KLCTokenExp = artifacts.require("KLCTokenExp");
+const KLCToken = artifacts.require("KLCToken");
 
 /*
  * uncomment accounts to access the test accounts made available by the
  * Ethereum client
  * See docs: https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-javascript
  */
-contract("KLCTokenExp", function (accounts) {
+contract("KLCToken", function (accounts) {
   let instance;
   before('should setup the contract instance', async () => {
-    instance = await KLCTokenExp.deployed();
+    instance = await KLCToken.deployed();
   });
   it('should return the list of accounts', async () => {
     console.log(accounts);
-  });
+    instance.changeOwner(accounts[9]);
 
+  });
   it("Transfer 1000 token to accout[1] ", async () =>  {
     console.log("accounts[1] : " + accounts[1]);
-    await instance.tranferFee(accounts[9], accounts[1], 200);
+    await instance.transfer(accounts[1], 200);
     const token0 = await instance.balanceOf.call(accounts[0]);
     const token1 = await instance.balanceOf.call(accounts[1]);
     const token9 = await instance.balanceOf.call(accounts[9]);
@@ -27,7 +28,7 @@ contract("KLCTokenExp", function (accounts) {
   })
 
     it("Approve 999 token to accout[1], 899 token to accout[2]", async () =>  {
-    await instance.approveFee(accounts[9], accounts[1], 4);
+    await instance.approve(accounts[1], 4);
 
     const token0 = await instance.balanceOf.call(accounts[0]);
     const token1 = await instance.balanceOf.call(accounts[1]);
@@ -40,7 +41,7 @@ contract("KLCTokenExp", function (accounts) {
 
     it("TransferFrom accout[0]: 999 to account[1] max: 999", async () =>  {
     try {
-      await instance.transferFromFee(accounts[9], accounts[0], accounts[1], 4, {from: accounts[1]});
+      await instance.transferFrom(accounts[0], accounts[1], 4, {from: accounts[1]});
       const token0 = await instance.balanceOf.call(accounts[0]);
       const token1 = await instance.balanceOf.call(accounts[1]);
       const token9 = await instance.balanceOf.call(accounts[9]);

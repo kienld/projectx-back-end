@@ -1,5 +1,5 @@
-const KLCTokenExp = artifacts.require("KLCTokenExp");
+const KLCToken = artifacts.require("KLCToken");
 
 module.exports = function (deployer) {
-  deployer.deploy(KLCTokenExp);
+  deployer.deploy(KLCToken);
 };
