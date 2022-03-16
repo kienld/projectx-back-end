@@ -13,5 +13,10 @@ module.exports = {
       network_id: 97,
       confirmations: 10
     },
-  }
+  },
+  compilers: {
+    solc: {
+        version: "0.8.0"  
+    }
+}
 };
